@@ -9,6 +9,7 @@ window.onload = function(){
 	    game.load.image('spire','assets/spire.png');
 	    game.load.image('invis','assets/invis.png');
 	    game.load.image('star','assets/star2.png');
+	    game.load.image('smoke','assets/smoke.png');
 	    game.load.image('moon','assets/moon.png');
 
 	    game.load.spritesheet('bad-wizard', 'assets/bad-wizard.png', 64, 64);
@@ -28,6 +29,7 @@ window.onload = function(){
 		background,
 		background2,
 		cliffHeight,
+		fireballs,
 		wizards,
 		wizardfireballs,
 		stars;
@@ -80,7 +82,7 @@ window.onload = function(){
 
 		var moon = game.add.sprite(1500, -50, 'moon');
 
-		enemies = game.add.group();
+		fireballs = game.add.group();
 		scrolls = game.add.group();
 		wizards = game.add.group();
 		wizardfireballs = game.add.group();
@@ -93,18 +95,18 @@ window.onload = function(){
 	function update() {
 		timer ++;
 		game.physics.arcade.collide(player, obstacles);
-		game.physics.arcade.collide(enemies,obstacles,flip);
-		game.physics.arcade.collide(enemies,player,killPlayer);
+		game.physics.arcade.collide(fireballs,obstacles,flip);
+		game.physics.arcade.collide(fireballs,player,killPlayer);
 		game.physics.arcade.collide(wizardfireballs,player,killPlayer);
 		game.physics.arcade.collide(wizards,player,killPlayer);
 
-		game.physics.arcade.collide(enemies,topWall);
-		game.physics.arcade.collide(enemies,bottomWall);
+		game.physics.arcade.collide(fireballs,topWall);
+		game.physics.arcade.collide(fireballs,bottomWall);
 
 		game.physics.arcade.collide(leftWall,player);
 		game.physics.arcade.collide(topWall,player);
 
-		game.physics.arcade.collide(enemies,leftWall,destroyObj2);
+		game.physics.arcade.collide(fireballs,leftWall,destroyObj2);
 		game.physics.arcade.collide(leftWall,wizardfireballs,destroyObj2);
 		game.physics.arcade.collide(obstacles,wizardfireballs,destroyObj2);
 		game.physics.arcade.collide(wizards,leftWall,destroyObj2);
@@ -135,13 +137,30 @@ window.onload = function(){
 		backgroundcheck();
 	}
 
+	//Manage enemy related things:
 	var fireSparkles = function(){
+		for(var i = 0; i < fireballs.children.length; i++){
+			if(random(0,1) === 0){
+				var ball = fireballs.children[i];
+				var x = ball.flipped ? random(ball.position.x - 15, ball.position.x - 25) : ball.position.x;
 
+				var s = game.add.sprite(
+					x,
+					random(ball.position.y + 10,ball.position.y + 25),
+					'smoke');
+				game.physics.arcade.enable(s);
+				s.body.velocity.x = random(-23,23);
+				s.body.velocity.y = random(-23,23);
+				s.scale.setTo(6,6);
+				s.alpha = random(20,50) / 100;;
+				s.lifespan = 1000;
+			}
+		}
 	}
 
 	var castSpells = function(){
 		for(var i = 0; i < wizards.children.length; i++){
-			if(random(0,300) === 1){
+			if(random(0,100) === 1){
 				wizards.children[i].castFireball();
 			}
 		}
@@ -286,7 +305,7 @@ window.onload = function(){
 			enemy.animations.add('fire');
 			enemy.animations.play('fire',10,true);
 
-			enemies.add(enemy);
+			fireballs.add(enemy);
 		}
 	}
 
