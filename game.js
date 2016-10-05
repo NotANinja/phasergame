@@ -2,21 +2,23 @@ var game = new Phaser.Game(1800, 900, Phaser.AUTO, 'game', { preload: preload, c
 
 function preload() {
     game.load.image('ground', 'assets/platform.png');
-    game.load.image('bg','assets/dank3.png');
+    game.load.image('bg','assets/bg-dark.png');
     game.load.image('scroll','assets/scroll.png');
-    game.load.image('tree','assets/tree2.png');
-    game.load.image('spire','assets/spire2.png');
+    game.load.image('tree','assets/tree-dark.png');
+    game.load.image('spire','assets/spire-dark.png');
     game.load.image('invis','assets/invis.png');
-    game.load.image('star','assets/star2.png');
+    game.load.image('star','assets/star.png');
     game.load.image('smoke','assets/smoke.png');
     game.load.image('moon','assets/moon.png');
+    game.load.image('splash','assets/splash.png');
 
     game.load.spritesheet('bad-wizard', 'assets/bad-wizard.png', 64, 64);
     game.load.spritesheet('dude', 'assets/wizard.png', 46, 80);
     game.load.spritesheet('fireball', 'assets/fireball.png', 50,30);
 }
 
-var obstacles, 
+var backgrounds,
+	obstacles, 
 	leftWall, 
 	topWall, 
 	bottomWall, 
@@ -33,62 +35,84 @@ var obstacles,
 	wizardfireballs,
 	stars,
 	scoreBoard,
-	cursors;
+	cursors,
+	gameStarted,
+	splashScreen;
 
 function create() {
+	gameStarted = false;	
+	spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
 	//init global variables
 	worldspeed = -150;
 	cliffHeight = 255;
+
+    addMoon();
+    addStars();
+	initializeGroups();
+	addBoundaries();
+	addStartMessage();
+}
+
+function update() {
+	game.physics.arcade.collide(stars,leftWall,resetStarPos);
+
+	if(gameStarted){
+		updateGame();
+	}
+	else{
+		if(spaceBar.isDown){
+			startGame();
+		}
+	}
+}
+
+var startGame = function(){
+	//init background objects / object groups
 	score = 0;
 	timer = 0;
 
-	//init background objects / object groups
-	game.physics.startSystem(Phaser.Physics.ARCADE);
-	addStars();
 	addBackground();
-	initializeGroups();
-	addBoundaries();
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+	removeExtraStars();
     createPlayer();
-    addMoon();
+    splashScreen.destroy();
 
 	cursors = game.input.keyboard.createCursorKeys();
-
-	
 
 	scoreBoard = game.add.text(15, 15, "Score: " + timer * (score + 1), {
         font: "65px Arial",
         fill: "#DDDDDD",
         align: "center",
     });
+
+    gameStarted = true;
 }
 
-function update() {
+var updateGame = function(){
 	if(player.alive){
-		timer ++;
-		if(timer % 75 === 0){
-			addRandomObstacles();
-		}
+			timer ++;
+			if(timer % 75 === 0){
+				addRandomObstacles();
+			}
 
-		if(timer % 65 === 0 && random(1,3) === 1|| timer === 5){	
-			addRandomEnemies();
-		}
+			if(timer % 65 === 0 && random(1,3) === 1){	
+				addRandomEnemies();
+			}
 
-		if(timer % 300 === 0 && random(0,1) === 0 || timer === 200){
-			addScroll();
-		}
-	}
-		
+			if(timer % 300 === 0 && random(0,1) === 0 || timer === 200){
+				addScroll();
+			}
+		}		
 
-	bindCollisions();
+		bindCollisions();
 
-	playerControls();
-	castSpells();
-	fireSparkles();
+		playerControls();
+		castSpells();
+		fireSparkles();	
 
-	
-
-	backgroundcheck();
-	scoreBoard.setText("Score: " + Math.floor((timer / 10) + (score * 100)));
+		backgroundcheck();
+		scoreBoard.setText("Score: " + Math.floor((timer / 10) + (score * 100)));
 }
 
 var bindCollisions = function(){
@@ -111,9 +135,7 @@ var bindCollisions = function(){
 
 	game.physics.arcade.collide(obstacles,scrolls,destroyObj2);
 	game.physics.arcade.collide(obstacles,wizards,destroyObj2);
-	game.physics.arcade.collide(player,scrolls,collectScroll);
-
-	game.physics.arcade.collide(stars,leftWall,resetStarPos);
+	game.physics.arcade.collide(player,scrolls,collectScroll);	
 }
 
 var addBoundaries = function(){
@@ -149,6 +171,8 @@ var destroyObj2 = function(obj1,obj2){
 }
 
 var initializeGroups = function(){
+	backgrounds = game.add.group();
+	splashScreen = game.add.group();
 	obstacles = game.add.group();
 	fireballs = game.add.group();
 	scrolls = game.add.group();
@@ -156,8 +180,21 @@ var initializeGroups = function(){
 	wizardfireballs = game.add.group();
 }
 
+var destroyGroups = function(){
+	backgrounds.destroy();
+	obstacles.destroy();
+	fireballs.destroy();
+	scrolls.destroy();
+	wizards.destroy();
+	wizardfireballs.destroy();
+}
+
 var killPlayer = function(){
 	player.kill();
+	gameStarted = false;
+
+	destroyGroups();
+	scoreBoard.destroy();
 }
 
 var createPlayer = function(){
@@ -171,6 +208,8 @@ var createPlayer = function(){
 	player.body.height -= 50;
 	player.anchor.setTo(.5, .5);
 	player.body.offset.y = 40;
+	player.alpha = 0;
+	game.add.tween(player).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 0, false);
 }
 
 var playerControls = function(){
@@ -228,6 +267,22 @@ var playerControls = function(){
     		player.body.velocity.y += accel;
     	}
     }
+}
+
+var addStartMessage = function(){
+	var splashImage = game.add.sprite(game.world.width / 2 - 500, game.world.height / 5, 'splash')
+
+	var startMessage = game.add.text(game.world.width / 3, game.world.height / 2 + 300, "Press space to start!", {
+        font: "65px Arial",
+        fill: "#DDDDDD",
+        align: "center",
+    });
+
+    startMessage.alpha = .2;
+	game.add.tween(startMessage).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, -1, true);
+
+	splashScreen.add(startMessage);
+	splashScreen.add(splashImage);
 }
 
 random = function(min,max){
