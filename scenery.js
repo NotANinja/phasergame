@@ -25,23 +25,25 @@ var CreateStar = function(xPosition,yPosition,scale,speed,tint){
 }
 
 var backgroundcheck = function(){
-	if(background.x <= -game.world.width){
-		background.x += 2 *game.world.width;
+	var children = backgrounds.children;
+
+	if(children[0].x <= -game.world.width){
+		children[0].x += 2 *game.world.width;
 	}
-	else if(background2.x <= -game.world.width){
-		background2.x += 2 * game.world.width;
+	else if(children[1].x <= -game.world.width){
+		children[1].x += 2 * game.world.width;
 	}
 }
 
 var addBackground = function(){
-	background = game.add.sprite(0, 0, 'bg');
+	var background = game.add.sprite(0, 0, 'bg');
 	game.physics.arcade.enable(background);
 	background.body.velocity.x = worldspeed;
 	background.alpha = 0;
 	game.add.tween(background).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 0, false);
 	backgrounds.add(background);
 
-	background2 = game.add.sprite(game.world.width, 0, 'bg');
+	var background2 = game.add.sprite(game.world.width, 0, 'bg');
 	game.physics.arcade.enable(background2);
 	background2.body.velocity.x = worldspeed;
 	background2.alpha = 0;
@@ -56,13 +58,4 @@ var resetStarPos = function(leftwall,star){
 
 var addMoon = function(){
 	game.add.sprite(1500, -50, 'moon');
-}
-
-var removeExtraStars = function(){
-	for(var i = 0; i < stars.children.length; i++){
-		if(stars.children[i].position.y > cliffHeight){
-			console.log('stargone');
-			stars.children[i].kill();
-		}
-	}
 }

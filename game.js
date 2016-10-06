@@ -10,11 +10,11 @@ function preload() {
     game.load.image('star','assets/star.png');
     game.load.image('smoke','assets/smoke.png');
     game.load.image('moon','assets/moon.png');
-    game.load.image('splash','assets/splash.png');
 
     game.load.spritesheet('bad-wizard', 'assets/bad-wizard.png', 64, 64);
     game.load.spritesheet('dude', 'assets/wizard.png', 46, 80);
     game.load.spritesheet('fireball', 'assets/fireball.png', 50,30);
+    game.load.spritesheet('splash','assets/splash.png',1000,540);
 }
 
 var backgrounds,
@@ -27,8 +27,6 @@ var backgrounds,
 	score, 
 	timer,
 	worldspeed,
-	background,
-	background2,
 	cliffHeight,
 	fireballs,
 	wizards,
@@ -51,7 +49,7 @@ function create() {
     addStars();
 	initializeGroups();
 	addBoundaries();
-	addStartMessage();
+	addSplashScreen();
 }
 
 function update() {
@@ -71,12 +69,14 @@ var startGame = function(){
 	//init background objects / object groups
 	score = 0;
 	timer = 0;
+	if(scoreBoard != undefined){
+		scoreBoard.destroy();
+	}
 
 	addBackground();
 	game.physics.startSystem(Phaser.Physics.ARCADE);
-	removeExtraStars();
     createPlayer();
-    splashScreen.destroy();
+    splashScreen.removeBetween(0);
 
 	cursors = game.input.keyboard.createCursorKeys();
 
@@ -111,16 +111,19 @@ var updateGame = function(){
 		castSpells();
 		fireSparkles();	
 
-		backgroundcheck();
+		if(backgrounds.children.length > 1){
+			backgroundcheck();
+		}
+
 		scoreBoard.setText("Score: " + Math.floor((timer / 10) + (score * 100)));
 }
 
 var bindCollisions = function(){
 	game.physics.arcade.collide(player, obstacles);
 	game.physics.arcade.collide(fireballs,obstacles,flip);
-	game.physics.arcade.collide(fireballs,player,killPlayer);
-	game.physics.arcade.collide(wizardfireballs,player,killPlayer);
-	game.physics.arcade.collide(wizards,player,killPlayer);
+	game.physics.arcade.collide(fireballs,player,endGame);
+	game.physics.arcade.collide(wizardfireballs,player,endGame);
+	game.physics.arcade.collide(wizards,player,endGame);
 
 	game.physics.arcade.collide(fireballs,topWall);
 	game.physics.arcade.collide(fireballs,bottomWall);
@@ -180,21 +183,38 @@ var initializeGroups = function(){
 	wizardfireballs = game.add.group();
 }
 
-var destroyGroups = function(){
-	backgrounds.destroy();
-	obstacles.destroy();
-	fireballs.destroy();
-	scrolls.destroy();
-	wizards.destroy();
-	wizardfireballs.destroy();
+var removeGameSprites = function(){
+	//remove all game elements from groups
+	player.kill();
+	backgrounds.removeBetween(0);
+	obstacles.removeBetween(0);
+	fireballs.removeBetween(0);
+	scrolls.removeBetween(0);
+	wizards.removeBetween(0);
+	wizardfireballs.removeBetween(0);
 }
 
-var killPlayer = function(){
-	player.kill();
-	gameStarted = false;
-
-	destroyGroups();
-	scoreBoard.destroy();
+var endGame = function(){
+	player.body.enable = false;
+	game.add.tween(player).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(obstacles).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(fireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(scrolls).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(wizards).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(wizardfireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	var tween = game.add.tween(backgrounds).to( { alpha: 0 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+	
+	tween.onComplete.add(removeGameSprites);	
+	tween.onComplete.add(addSplashScreen);
+	tween.onComplete.add(function(){
+		gameStarted = false;
+		obstacles.alpha = 1;
+		fireballs.alpha = 1;
+		scrolls.alpha = 1;
+		wizards.alpha = 1;
+		wizardfireballs.alpha = 1;
+		backgrounds.alpha = 1;
+	});
 }
 
 var createPlayer = function(){
@@ -269,8 +289,12 @@ var playerControls = function(){
     }
 }
 
-var addStartMessage = function(){
-	var splashImage = game.add.sprite(game.world.width / 2 - 500, game.world.height / 5, 'splash')
+var addSplashScreen = function(){
+	var splashImage = game.add.sprite(game.world.width / 2 - 500, game.world.height / 5, 'splash');
+	splashImage.animations.add('splash');
+	splashImage.animations.play('splash',10,true);
+	splashImage.alpha = 0;
+	game.add.tween(splashImage).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
 
 	var startMessage = game.add.text(game.world.width / 3, game.world.height / 2 + 300, "Press space to start!", {
         font: "65px Arial",
