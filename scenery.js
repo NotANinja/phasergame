@@ -3,10 +3,10 @@ scenery.addStars = function(){
 	game.stars = game.add.group();
 	for(var i = 0; i < game.world.width / 20; i ++){
 
-		var star = CreateStar(i * 20, random(0,game.world.height),1.5,game.worldspeed / 2, random(16775215,16777215));
+		var star = this.CreateStar(i * 20, random(0,game.world.height),1.5,game.worldspeed / 2, random(16775215,16777215));
 		game.stars.add(star);
 
-		var star = CreateStar(i * 20 + 5,  random(0,game.world.height), 1, game.worldspeed / 10, random(16775215,16775315));
+		var star = this.CreateStar(i * 20 + 5,  random(0,game.world.height), 1, game.worldspeed / 10, random(16775215,16775315));
 		game.stars.add(star);
 
 		star = game.add.sprite(i * 80 + 25, random(0,game.world.height), 'star');
@@ -14,7 +14,7 @@ scenery.addStars = function(){
 	}
 }
 
-var CreateStar = function(xPosition,yPosition,scale,speed,tint){
+scenery.CreateStar = function(xPosition,yPosition,scale,speed,tint){
 	var star = game.add.sprite(xPosition, yPosition, 'star');
 	star.scale.setTo(scale,scale);
 	game.physics.arcade.enable(star);
@@ -25,7 +25,7 @@ var CreateStar = function(xPosition,yPosition,scale,speed,tint){
 	return star
 }
 
-var backgroundcheck = function(){
+scenery.backgroundcheck = function(){
 	var children = game.backgrounds.children;
 
 	if(children[0].x <= -game.world.width){
@@ -36,7 +36,7 @@ var backgroundcheck = function(){
 	}
 }
 
-var addBackground = function(){
+scenery.addBackground = function(){
 	var background = game.add.sprite(0, 0, 'bg');
 	game.physics.arcade.enable(background);
 	background.body.velocity.x = game.worldspeed;
@@ -52,11 +52,11 @@ var addBackground = function(){
 	game.backgrounds.add(background2);
 }
 
-var resetStarPos = function(leftwall,star){
+scenery.resetStarPos = function(leftwall,star){
 	star.x = game.world.width - 50;
 	star.body.velocity.x = star.vel;
 }
 
-var addMoon = function(){
+scenery.addMoon = function(){
 	game.add.sprite(1500, -50, 'moon');
 }

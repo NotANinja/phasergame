@@ -1,17 +1,18 @@
-var addRandomObstacles = function(){
+var obstacle = window.obstacle || {};
+obstacle.addRandomObstacles = function(){
 	var obstacleType = random(1,3);
 	switch(obstacleType){
 		case 1,2:
-			addTree();
+			this.addTree();
 			break;
 		case 3:
-			addSpire();
+			this.addSpire();
 		default:
 			break;
 	}				
 }
 
-var addTree = function(){
+obstacle.addTree = function(){
 	var tree = game.add.sprite(random(game.width,game.width+10),random(game.cliffHeight,game.world.height - 160),'tree');
 			game.physics.arcade.enable(tree);
 			tree.enableBody = true;
@@ -21,8 +22,7 @@ var addTree = function(){
 			game.obstacles.add(tree);
 }
 
-var addSpire = function(){
-	console.log(game);
+obstacle.addSpire = function(){
 	var spire = game.add.sprite(random(game.width,game.width+100),random(game.cliffHeight,game.height - 50),'spire');
 			spire.scale.setTo(1,random(50,125) / 100);
 			game.physics.arcade.enable(spire);

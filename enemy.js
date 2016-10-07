@@ -1,11 +1,11 @@
 var enemy = window.enemy || {};
 
-var addRandomEnemies = function(){
-	addFireballs();
-	addBadWizards();
+enemy.addRandomEnemies = function(){
+	this.addFireballs();
+	this.addBadWizards();
 }
 
-var addBadWizards = function(){
+enemy.addBadWizards = function(){
 	var count = 0;
 	if(game.score >= 5 && random(0,1) === 1){
 		count = 1;
@@ -38,7 +38,7 @@ var addBadWizards = function(){
 	}
 }
 
-var addFireballs = function(){
+enemy.addFireballs = function(){
 	var count = random(1,2);
 
 	for(var i = 0; i < count; i++){
@@ -68,7 +68,7 @@ var addFireballs = function(){
 	}
 }
 
-var fireSparkles = function(){
+enemy.fireSparkles = function(){
 	for(var i = 0; i < game.fireballs.children.length; i++){
 		if(random(0,10) === 0){
 			var ball = game.fireballs.children[i];
@@ -88,7 +88,7 @@ var fireSparkles = function(){
 	}
 }
 
-var castSpells = function(){
+enemy.castSpells = function(){
 	for(var i = 0; i < game.wizards.children.length; i++){
 		if(random(0,100) === 1){
 			game.wizards.children[i].castFireball();
@@ -96,14 +96,14 @@ var castSpells = function(){
 	}
 }
 
-var addScroll = function(){
+enemy.addScroll = function(){
 	var scroll = game.add.sprite(game.world.width,random(game.cliffHeight,game.height - 50),'scroll');
 	game.physics.arcade.enable(scroll);
 	scroll.body.velocity.x = game.worldspeed;
 	scrolls.add(scroll);
 }
 
-var collectScroll = function(player,scroll){
+enemy.collectScroll = function(player,scroll){
 	scroll.kill();
 	game.score ++;
 }

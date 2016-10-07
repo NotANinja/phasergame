@@ -48,7 +48,7 @@ function create() {
 	game.worldspeed = -150;
 	game.cliffHeight = 255;
 
-    addMoon();
+    scenery.addMoon();
     scenery.addStars();
 	initializeGroups();
 	addBoundaries();
@@ -56,7 +56,7 @@ function create() {
 }
 
 function update() {
-	game.physics.arcade.collide(game.stars,game.leftWall,resetStarPos);
+	game.physics.arcade.collide(game.stars,game.leftWall,scenery.resetStarPos);
 
 	if(game.gameStarted){
 		updateGame();
@@ -76,7 +76,7 @@ var startGame = function(){
 		game.scoreBoard.destroy();
 	}
 
-	addBackground();
+	scenery.addBackground();
 	game.physics.startSystem(Phaser.Physics.ARCADE);
     createPlayer();
     game.splashScreen.removeBetween(0);
@@ -96,26 +96,26 @@ var updateGame = function(){
 	if(game.player.alive){
 			game.timer ++;
 			if(game.timer % 75 === 0){
-				addRandomObstacles();
+				obstacle.addRandomObstacles();
 			}
 
 			if(game.timer % 65 === 0 && random(1,3) === 1){	
-				addRandomEnemies();
+				enemy.addRandomEnemies();
 			}
 
 			if(game.timer % 300 === 0 && random(0,1) === 0 || game.timer === 200){
-				addScroll();
+				enemy.addScroll();
 			}
 		}		
 
 		bindCollisions();
 
 		playerControls();
-		castSpells();
-		fireSparkles();	
+		enemy.castSpells();
+		enemy.fireSparkles();	
 
 		if(game.backgrounds.children.length > 1){
-			backgroundcheck();
+			scenery.backgroundcheck();
 		}
 
 		game.scoreBoard.setText("Score: " + Math.floor((game.timer / 10) + (game.score * 100)));
@@ -141,7 +141,7 @@ var bindCollisions = function(){
 
 	game.physics.arcade.collide(game.obstacles,scrolls,destroyObj2);
 	game.physics.arcade.collide(game.obstacles,game.wizards,destroyObj2);
-	game.physics.arcade.collide(game.player,scrolls,collectScroll);	
+	game.physics.arcade.collide(game.player,scrolls,enemy.collectScroll);	
 }
 
 var addBoundaries = function(){
@@ -199,6 +199,7 @@ var removeGameSprites = function(){
 
 var endGame = function(){
 	game.player.body.enable = false;
+	game.player.animations.play('death',2,false);
 	
 	game.add.tween(game.obstacles).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
 	game.add.tween(game.fireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
@@ -225,7 +226,8 @@ var createPlayer = function(){
 	game.player = game.add.sprite(950, 550, 'dude');
     game.physics.arcade.enable(game.player);		
 	game.player.body.collideWorldBounds = true;	
-	game.player.animations.add('walk');
+	game.player.animations.add('walk',[0,1,2,3]);
+	game.player.animations.add('death',[4,5]);
 	game.player.animations.play('walk',5,true);
 	game.player.flipped = false;
 	game.player.body.width -= 3;
