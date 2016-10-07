@@ -1,4 +1,27 @@
-var game = new Phaser.Game(1800, 900, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
+window.onload = function(){
+	game = new Phaser.Game(1800, 900, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });	
+
+//declare game variables
+	game.backgrounds;
+	game.obstacles;
+	game.leftWall; 
+	game.topWall;
+	game.bottomWall;
+	game.player;
+	scroll;
+	game.score;
+	game.timer;
+	game.worldspeed;
+	game.cliffHeight;
+	game.fireballs;
+	game.wizards;
+	game.wizardfireballs;
+	game.stars;
+	game.scoreBoard;
+	game.cursors;
+	game.gameStarted;
+	game.splashScreen;
+
 
 function preload() {
     game.load.image('ground', 'assets/platform.png');
@@ -17,45 +40,25 @@ function preload() {
     game.load.spritesheet('splash','assets/splash.png',1000,540);
 }
 
-var backgrounds,
-	obstacles, 
-	leftWall, 
-	topWall, 
-	bottomWall, 
-	player,  
-	scroll, 
-	score, 
-	timer,
-	worldspeed,
-	cliffHeight,
-	fireballs,
-	wizards,
-	wizardfireballs,
-	stars,
-	scoreBoard,
-	cursors,
-	gameStarted,
-	splashScreen;
-
 function create() {
-	gameStarted = false;	
+	game.gameStarted = false;	
 	spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 	//init global variables
-	worldspeed = -150;
-	cliffHeight = 255;
+	game.worldspeed = -150;
+	game.cliffHeight = 255;
 
     addMoon();
-    addStars();
+    scenery.addStars();
 	initializeGroups();
 	addBoundaries();
-	addSplashScreen();
+	game.addSplashScreen();
 }
 
 function update() {
-	game.physics.arcade.collide(stars,leftWall,resetStarPos);
+	game.physics.arcade.collide(game.stars,game.leftWall,resetStarPos);
 
-	if(gameStarted){
+	if(game.gameStarted){
 		updateGame();
 	}
 	else{
@@ -67,40 +70,40 @@ function update() {
 
 var startGame = function(){
 	//init background objects / object groups
-	score = 0;
-	timer = 0;
-	if(scoreBoard != undefined){
-		scoreBoard.destroy();
+	game.score = 0;
+	game.timer = 0;
+	if(game.scoreBoard != undefined){
+		game.scoreBoard.destroy();
 	}
 
 	addBackground();
 	game.physics.startSystem(Phaser.Physics.ARCADE);
     createPlayer();
-    splashScreen.removeBetween(0);
+    game.splashScreen.removeBetween(0);
 
-	cursors = game.input.keyboard.createCursorKeys();
+	game.cursors = game.input.keyboard.createCursorKeys();
 
-	scoreBoard = game.add.text(15, 15, "Score: " + timer * (score + 1), {
+	game.scoreBoard = game.add.text(15, 15, "Score: " + game.timer * (game.score + 1), {
         font: "65px Arial",
         fill: "#DDDDDD",
         align: "center",
     });
 
-    gameStarted = true;
+    game.gameStarted = true;
 }
 
 var updateGame = function(){
-	if(player.alive){
-			timer ++;
-			if(timer % 75 === 0){
+	if(game.player.alive){
+			game.timer ++;
+			if(game.timer % 75 === 0){
 				addRandomObstacles();
 			}
 
-			if(timer % 65 === 0 && random(1,3) === 1){	
+			if(game.timer % 65 === 0 && random(1,3) === 1){	
 				addRandomEnemies();
 			}
 
-			if(timer % 300 === 0 && random(0,1) === 0 || timer === 200){
+			if(game.timer % 300 === 0 && random(0,1) === 0 || game.timer === 200){
 				addScroll();
 			}
 		}		
@@ -111,51 +114,51 @@ var updateGame = function(){
 		castSpells();
 		fireSparkles();	
 
-		if(backgrounds.children.length > 1){
+		if(game.backgrounds.children.length > 1){
 			backgroundcheck();
 		}
 
-		scoreBoard.setText("Score: " + Math.floor((timer / 10) + (score * 100)));
+		game.scoreBoard.setText("Score: " + Math.floor((game.timer / 10) + (game.score * 100)));
 }
 
 var bindCollisions = function(){
-	game.physics.arcade.collide(player, obstacles);
-	game.physics.arcade.collide(fireballs,obstacles,flip);
-	game.physics.arcade.collide(fireballs,player,endGame);
-	game.physics.arcade.collide(wizardfireballs,player,endGame);
-	game.physics.arcade.collide(wizards,player,endGame);
+	game.physics.arcade.collide(game.player, game.obstacles);
+	game.physics.arcade.collide(game.fireballs,game.obstacles,flip);
+	game.physics.arcade.collide(game.fireballs,game.player,endGame);
+	game.physics.arcade.collide(game.wizardfireballs,game.player,endGame);
+	game.physics.arcade.collide(game.wizards,game.player,endGame);
 
-	game.physics.arcade.collide(fireballs,topWall);
-	game.physics.arcade.collide(fireballs,bottomWall);
+	game.physics.arcade.collide(game.fireballs,game.topWall);
+	game.physics.arcade.collide(game.fireballs,game.bottomWall);
 
-	game.physics.arcade.collide(leftWall,player);
-	game.physics.arcade.collide(topWall,player);
+	game.physics.arcade.collide(game.leftWall,game.player);
+	game.physics.arcade.collide(game.topWall,game.player);
 
-	game.physics.arcade.collide(fireballs,leftWall,destroyObj2);
-	game.physics.arcade.collide(leftWall,wizardfireballs,destroyObj2);
-	game.physics.arcade.collide(obstacles,wizardfireballs,destroyObj2);
-	game.physics.arcade.collide(wizards,leftWall,destroyObj2);
+	game.physics.arcade.collide(game.fireballs,game.leftWall,destroyObj2);
+	game.physics.arcade.collide(game.leftWall,game.wizardfireballs,destroyObj2);
+	game.physics.arcade.collide(game.obstacles,game.wizardfireballs,destroyObj2);
+	game.physics.arcade.collide(game.wizards,game.leftWall,destroyObj2);
 
-	game.physics.arcade.collide(obstacles,scrolls,destroyObj2);
-	game.physics.arcade.collide(obstacles,wizards,destroyObj2);
-	game.physics.arcade.collide(player,scrolls,collectScroll);	
+	game.physics.arcade.collide(game.obstacles,scrolls,destroyObj2);
+	game.physics.arcade.collide(game.obstacles,game.wizards,destroyObj2);
+	game.physics.arcade.collide(game.player,scrolls,collectScroll);	
 }
 
 var addBoundaries = function(){
-	leftWall = game.add.sprite(-5, 0, 'invis');
-	leftWall.scale.setTo(1,game.world.height/32);
-	game.physics.arcade.enable(leftWall);	
-	leftWall.body.immovable = true;
+	game.leftWall = game.add.sprite(-5, 0, 'invis');
+	game.leftWall.scale.setTo(1,game.world.height/32);
+	game.physics.arcade.enable(game.leftWall);	
+	game.leftWall.body.immovable = true;
 
-	topWall = game.add.sprite(0,cliffHeight - 50,'invis');
-	topWall.scale.setTo(game.world.width,1);
-	game.physics.arcade.enable(topWall);	
-	topWall.body.immovable = true;
+	game.topWall = game.add.sprite(0,game.cliffHeight - 50,'invis');
+	game.topWall.scale.setTo(game.world.width,1);
+	game.physics.arcade.enable(game.topWall);	
+	game.topWall.body.immovable = true;
 
-	bottomWall = game.add.sprite(0,game.world.height,'ground');
-	bottomWall.scale.setTo(game.world.width,1);
-	game.physics.arcade.enable(bottomWall);
-	bottomWall.body.immovable = true;
+	game.bottomWall = game.add.sprite(0,game.world.height,'ground');
+	game.bottomWall.scale.setTo(game.world.width,1);
+	game.physics.arcade.enable(game.bottomWall);
+	game.bottomWall.body.immovable = true;
 }
 
 var flip = function(obj1,obj2){
@@ -174,122 +177,123 @@ var destroyObj2 = function(obj1,obj2){
 }
 
 var initializeGroups = function(){
-	backgrounds = game.add.group();
-	splashScreen = game.add.group();
-	obstacles = game.add.group();
-	fireballs = game.add.group();
+	game.backgrounds = game.add.group();
+	game.splashScreen = game.add.group();
+	game.obstacles = game.add.group();
+	game.fireballs = game.add.group();
 	scrolls = game.add.group();
-	wizards = game.add.group();
-	wizardfireballs = game.add.group();
+	game.wizards = game.add.group();
+	game.wizardfireballs = game.add.group();
 }
 
 var removeGameSprites = function(){
 	//remove all game elements from groups
-	player.kill();
-	backgrounds.removeBetween(0);
-	obstacles.removeBetween(0);
-	fireballs.removeBetween(0);
+	game.player.kill();
+	game.backgrounds.removeBetween(0);
+	game.obstacles.removeBetween(0);
+	game.fireballs.removeBetween(0);
 	scrolls.removeBetween(0);
-	wizards.removeBetween(0);
-	wizardfireballs.removeBetween(0);
+	game.wizards.removeBetween(0);
+	game.wizardfireballs.removeBetween(0);
 }
 
 var endGame = function(){
-	player.body.enable = false;
-	game.add.tween(player).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
-	game.add.tween(obstacles).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
-	game.add.tween(fireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.player.body.enable = false;
+	
+	game.add.tween(game.obstacles).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(game.fireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
 	game.add.tween(scrolls).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
-	game.add.tween(wizards).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
-	game.add.tween(wizardfireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
-	var tween = game.add.tween(backgrounds).to( { alpha: 0 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(game.wizards).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(game.wizardfireballs).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.add.tween(game.backgrounds).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0, false);
+	var tween = game.add.tween(game.player).to( { alpha: 0 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
 	
 	tween.onComplete.add(removeGameSprites);	
-	tween.onComplete.add(addSplashScreen);
+	tween.onComplete.add(game.addSplashScreen);
 	tween.onComplete.add(function(){
-		gameStarted = false;
-		obstacles.alpha = 1;
-		fireballs.alpha = 1;
+		game.gameStarted = false;
+		game.obstacles.alpha = 1;
+		game.	fireballs.alpha = 1;
 		scrolls.alpha = 1;
-		wizards.alpha = 1;
-		wizardfireballs.alpha = 1;
-		backgrounds.alpha = 1;
+		game.wizards.alpha = 1;
+		game.wizardfireballs.alpha = 1;
+		game.backgrounds.alpha = 1;
 	});
 }
 
 var createPlayer = function(){
-	player = game.add.sprite(950, 550, 'dude');
-    game.physics.arcade.enable(player);		
-	player.body.collideWorldBounds = true;	
-	player.animations.add('walk');
-	player.animations.play('walk',5,true);
-	player.flipped = false;
-	player.body.width -= 3;
-	player.body.height -= 50;
-	player.anchor.setTo(.5, .5);
-	player.body.offset.y = 40;
-	player.alpha = 0;
-	game.add.tween(player).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 0, false);
+	game.player = game.add.sprite(950, 550, 'dude');
+    game.physics.arcade.enable(game.player);		
+	game.player.body.collideWorldBounds = true;	
+	game.player.animations.add('walk');
+	game.player.animations.play('walk',5,true);
+	game.player.flipped = false;
+	game.player.body.width -= 3;
+	game.player.body.height -= 50;
+	game.player.anchor.setTo(.5, .5);
+	game.player.body.offset.y = 40;
+	game.player.alpha = 0;
+	game.add.tween(game.player).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 0, false);
 }
 
 var playerControls = function(){
 	var max = 250;
 	var accel = 15;
 
-	var x = player.body.velocity.x;
-	var y = player.body.velocity.y;
+	var x = game.player.body.velocity.x;
+	var y = game.player.body.velocity.y;
 
 
-	if (cursors.left.isDown)
+	if (game.cursors.left.isDown)
     {
-    	if(!player.flipped){
-    		player.flipped = true;
-    		player.scale.x *= -1;
+    	if(!game.player.flipped){
+    		game.player.flipped = true;
+    		game.player.scale.x *= -1;
     	}
-    	if(x > (max * -1) + worldspeed)
-        	player.body.velocity.x += -accel;
+    	if(x > (max * -1) + game.worldspeed)
+        	game.player.body.velocity.x += -accel;
     }
-    else if (cursors.right.isDown)
+    else if (game.cursors.right.isDown)
     {
-    	if(player.flipped){
-    		player.flipped = false;
-    		player.scale.x *= -1;
+    	if(game.player.flipped){
+    		game.player.flipped = false;
+    		game.player.scale.x *= -1;
     	}
     	if(x < max)
-        	player.body.velocity.x += accel;
+        	game.player.body.velocity.x += accel;
     }
     else{
-    	if(x > 0 + worldspeed){
-			var vel = player.body.velocity.x;
-			vel > accel ? player.body.velocity.x -= accel : player.body.velocity.x = worldspeed;
+    	if(x > 0 + game.worldspeed){
+			var vel = game.player.body.velocity.x;
+			vel > accel ? game.player.body.velocity.x -= accel : game.player.body.velocity.x = game.worldspeed;
     	}    		 		
-    	else if( x < 0 - worldspeed){
-    		var vel = player.body.velocity.x;
-    		vel < (accel * -1) + worldspeed ? player.body.velocity.x += accel : player.body.velocity.x = worldspeed;
+    	else if( x < 0 - game.worldspeed){
+    		var vel = game.player.body.velocity.x;
+    		vel < (accel * -1) + game.worldspeed ? game.player.body.velocity.x += accel : game.player.body.velocity.x = game.worldspeed;
     	}
     }
 
-    if (cursors.up.isDown)
+    if (game.cursors.up.isDown)
     {
     	if(y > (max * -1))
-        	player.body.velocity.y += -accel;
+        	game.player.body.velocity.y += -accel;
     }
-    else if (cursors.down.isDown){
+    else if (game.cursors.down.isDown){
     	if(y < max)
-    		player.body.velocity.y += accel;
+    		game.player.body.velocity.y += accel;
     }
     else{
     	if(y > 0){
-    		player.body.velocity.y -= accel;	    		
+    		game.player.body.velocity.y -= accel;	    		
     	}
     		
     	else if( y < 0){
-    		player.body.velocity.y += accel;
+    		game.player.body.velocity.y += accel;
     	}
     }
 }
 
-var addSplashScreen = function(){
+game.addSplashScreen = function(){
 	var splashImage = game.add.sprite(game.world.width / 2 - 500, game.world.height / 5, 'splash');
 	splashImage.animations.add('splash');
 	splashImage.animations.play('splash',10,true);
@@ -305,12 +309,12 @@ var addSplashScreen = function(){
     startMessage.alpha = .2;
 	game.add.tween(startMessage).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, -1, true);
 
-	splashScreen.add(startMessage);
-	splashScreen.add(splashImage);
+	game.splashScreen.add(startMessage);
+	game.splashScreen.add(splashImage);
 }
+};
 
 random = function(min,max){
 	var x = Math.floor(Math.random() * (max - min + 1)) + min;
 	return x;
 }
-

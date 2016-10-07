@@ -1,15 +1,16 @@
-var addStars = function(){
-	stars = game.add.group();
+var scenery = window.scenery || {};
+scenery.addStars = function(){
+	game.stars = game.add.group();
 	for(var i = 0; i < game.world.width / 20; i ++){
 
-		var star = CreateStar(i * 20, random(0,game.world.height),1.5,worldspeed / 2, random(16775215,16777215));
-		stars.add(star);
+		var star = CreateStar(i * 20, random(0,game.world.height),1.5,game.worldspeed / 2, random(16775215,16777215));
+		game.stars.add(star);
 
-		var star = CreateStar(i * 20 + 5,  random(0,game.world.height), 1, worldspeed / 10, random(16775215,16775315));
-		stars.add(star);
+		var star = CreateStar(i * 20 + 5,  random(0,game.world.height), 1, game.worldspeed / 10, random(16775215,16775315));
+		game.stars.add(star);
 
 		star = game.add.sprite(i * 80 + 25, random(0,game.world.height), 'star');
-		stars.add(star);
+		game.stars.add(star);
 	}
 }
 
@@ -25,7 +26,7 @@ var CreateStar = function(xPosition,yPosition,scale,speed,tint){
 }
 
 var backgroundcheck = function(){
-	var children = backgrounds.children;
+	var children = game.backgrounds.children;
 
 	if(children[0].x <= -game.world.width){
 		children[0].x += 2 *game.world.width;
@@ -38,17 +39,17 @@ var backgroundcheck = function(){
 var addBackground = function(){
 	var background = game.add.sprite(0, 0, 'bg');
 	game.physics.arcade.enable(background);
-	background.body.velocity.x = worldspeed;
+	background.body.velocity.x = game.worldspeed;
 	background.alpha = 0;
 	game.add.tween(background).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 0, false);
-	backgrounds.add(background);
+	game.backgrounds.add(background);
 
 	var background2 = game.add.sprite(game.world.width, 0, 'bg');
 	game.physics.arcade.enable(background2);
-	background2.body.velocity.x = worldspeed;
+	background2.body.velocity.x = game.worldspeed;
 	background2.alpha = 0;
 	game.add.tween(background2).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 0, false);
-	backgrounds.add(background2);
+	game.backgrounds.add(background2);
 }
 
 var resetStarPos = function(leftwall,star){

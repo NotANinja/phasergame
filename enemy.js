@@ -7,18 +7,18 @@ var addRandomEnemies = function(){
 
 var addBadWizards = function(){
 	var count = 0;
-	if(score >= 5 && random(0,1) === 1){
+	if(game.score >= 5 && random(0,1) === 1){
 		count = 1;
-	}if(score >= 10 && random(0,1) === 1){
+	}if(game.score >= 10 && random(0,1) === 1){
 		count = 2;
 	}
 
 	for(var i = 0; i < count; i++){
-		var enemy = game.add.sprite(random(game.width+150, game.width+500),random(cliffHeight,game.height-64),'bad-wizard');
+		var enemy = game.add.sprite(random(game.width+150, game.width+500),random(game.cliffHeight,game.height-64),'bad-wizard');
 		game.physics.arcade.enable(enemy);
 		enemy.body.bounce.x = 1;
 		enemy.body.immovable = true;
-		enemy.body.velocity.x = worldspeed;
+		enemy.body.velocity.x = game.worldspeed;
 
 		enemy.animations.add('suck');
 		enemy.animations.play('suck',5,true);
@@ -31,10 +31,10 @@ var addBadWizards = function(){
 			fireball.tint = parseInt('00FFFF',16);
 			fireball.body.bounce.x = 1;
 			fireball.lifespan = 5000;
-			wizardfireballs.add(fireball);
+			game.wizardfireballs.add(fireball);
 		}
 
-		wizards.add(enemy);
+		game.wizards.add(enemy);
 	}
 }
 
@@ -42,13 +42,13 @@ var addFireballs = function(){
 	var count = random(1,2);
 
 	for(var i = 0; i < count; i++){
-		var enemy = game.add.sprite(game.width,random(cliffHeight,game.height),'fireball');
+		var enemy = game.add.sprite(game.width,random(game.cliffHeight,game.height),'fireball');
 		game.physics.arcade.enable(enemy);
 
 		enemy.body.bounce.y = 1;
 		enemy.body.velocity.y = -200;
 		enemy.body.bounce.x = 1;
-		enemy.body.velocity.x = random(worldspeed * 2,worldspeed * 3);
+		enemy.body.velocity.x = random(game.worldspeed * 2,game.worldspeed * 3);
 
 		enemy.body.maxVelocity.x = 500;
 
@@ -64,15 +64,14 @@ var addFireballs = function(){
 		enemy.anchor.setTo(.1, 0.5);
 		enemy.body.width -= 3;
 
-		fireballs.add(enemy);
+		game.fireballs.add(enemy);
 	}
 }
 
-
 var fireSparkles = function(){
-	for(var i = 0; i < fireballs.children.length; i++){
+	for(var i = 0; i < game.fireballs.children.length; i++){
 		if(random(0,10) === 0){
-			var ball = fireballs.children[i];
+			var ball = game.fireballs.children[i];
 			var x = ball.flipped ? ball.position.x - 70 : ball.position.x + 50;
 
 			var s = game.add.sprite(
@@ -90,21 +89,21 @@ var fireSparkles = function(){
 }
 
 var castSpells = function(){
-	for(var i = 0; i < wizards.children.length; i++){
+	for(var i = 0; i < game.wizards.children.length; i++){
 		if(random(0,100) === 1){
-			wizards.children[i].castFireball();
+			game.wizards.children[i].castFireball();
 		}
 	}
 }
 
 var addScroll = function(){
-	var scroll = game.add.sprite(game.world.width,random(cliffHeight,game.height - 50),'scroll');
+	var scroll = game.add.sprite(game.world.width,random(game.cliffHeight,game.height - 50),'scroll');
 	game.physics.arcade.enable(scroll);
-	scroll.body.velocity.x = worldspeed;
+	scroll.body.velocity.x = game.worldspeed;
 	scrolls.add(scroll);
 }
 
 var collectScroll = function(player,scroll){
 	scroll.kill();
-	score ++;
+	game.score ++;
 }
