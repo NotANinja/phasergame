@@ -305,7 +305,7 @@ game.addSplashScreen = function(){
 	splashImage.alpha = 0;
 	game.add.tween(splashImage).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
 
-	var startMessage = game.add.text(game.world.width / 3, game.world.height / 2 + 300, "Press space to start!", {
+	var startMessage = game.add.text((game.world.width / 2) - 350, (game.world.height / 2) + 300, "Collect scrolls to get points. \nPress space to start!", {
         font: "65px Arial",
         fill: "#DDDDDD",
         align: "center",
