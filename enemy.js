@@ -40,10 +40,17 @@ enemy.addBadWizards = function(){
 }
 
 enemy.addFireballs = function(){
-	var count = random(1,2);
+	var count = 0;
+	if(game.score < 3){
+		count = random(0,1);
+	} else if(game.score >= 3 && game.score < 10){
+		count = random(0,2);
+	}else if(game.score >= 10){
+		count = random(0,4);
+	}
 
 	for(var i = 0; i < count; i++){
-		var enemy = game.add.sprite(game.width,random(game.cliffHeight,game.height),'fireball');
+		let enemy = game.add.sprite(game.width,random(game.cliffHeight,game.height),'fireball');
 		game.physics.arcade.enable(enemy);
 
 		enemy.body.bounce.y = 1;
