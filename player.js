@@ -25,8 +25,7 @@ player.bindControls = function(){
 	var x = game.player.body.velocity.x;
 	var y = game.player.body.velocity.y;
 
-
-	if (game.cursors.left.isDown)
+	if (game.cursors.left.isDown || game.wasd.a.isDown)
     {
     	if(!game.player.flipped){
     		game.player.flipped = true;
@@ -35,7 +34,7 @@ player.bindControls = function(){
     	if(x > (max * -1) + game.worldspeed)
         	game.player.body.velocity.x += -accel;
     }
-    else if (game.cursors.right.isDown)
+    else if (game.cursors.right.isDown || game.wasd.d.isDown)
     {
     	if(game.player.flipped){
     		game.player.flipped = false;
@@ -55,12 +54,12 @@ player.bindControls = function(){
     	}
     }
 
-    if (game.cursors.up.isDown)
+    if (game.cursors.up.isDown || game.wasd.w.isDown)
     {
     	if(y > (max * -1))
         	game.player.body.velocity.y += -accel;
     }
-    else if (game.cursors.down.isDown){
+    else if (game.cursors.down.isDown || game.wasd.s.isDown){
     	if(y < max)
     		game.player.body.velocity.y += accel;
     }

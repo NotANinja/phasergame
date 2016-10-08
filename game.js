@@ -44,13 +44,13 @@ function preload() {
 }
 
 function create() {
-	game.gameStarted = false;	
-	game.spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	game.gameStarted = false;
 
 	//init global variables
 	game.worldspeed = -50 - (0.05 * gameWidth);
 	game.cliffHeight = 255;
 
+	addControls();
     scenery.addMoon();
     scenery.addStars();
 	initializeGroups();
@@ -84,7 +84,7 @@ var startGame = function(){
     player.create();
     game.splashScreen.removeBetween(0);
 
-	game.cursors = game.input.keyboard.createCursorKeys();
+	
 
 	game.scoreBoard = game.add.text(15, 15, "Score: " + game.timer * (game.score + 1), {
         font: "65px Arial",
@@ -122,6 +122,19 @@ var updateGame = function(){
 		}
 
 		game.scoreBoard.setText("Score: " + Math.floor((game.timer / 10) + (game.score * 100)));
+}
+
+
+
+var addControls = function(){
+	game.cursors = game.input.keyboard.createCursorKeys();
+	game.spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	game.wasd = {
+		w : game.input.keyboard.addKey(Phaser.Keyboard.W),
+		a : game.input.keyboard.addKey(Phaser.Keyboard.A),
+		s : game.input.keyboard.addKey(Phaser.Keyboard.S),
+		d : game.input.keyboard.addKey(Phaser.Keyboard.D)		
+	}
 }
 
 var bindCollisions = function(){
