@@ -48,7 +48,7 @@ function create() {
 	game.spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 	//init global variables
-	game.worldspeed = -100 - (0.05 * gameWidth);
+	game.worldspeed = -50 - (0.05 * gameWidth);
 	game.cliffHeight = 255;
 
     scenery.addMoon();
