@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 var scenery = window.scenery || {};
 scenery.addStars = function(){
 	game.stars = game.add.group();
@@ -43,6 +43,9 @@ scenery.addBackground = function(){
 	background.body.velocity.x = game.worldspeed;
 	background.alpha = 0;
 	game.add.tween(background).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 0, false);
+
+	//resize for smaller viewports
+	background.scale.setTo(game.world.width / 1800, 1);
 	game.backgrounds.add(background);
 
 	var background2 = game.add.sprite(game.world.width, 0, 'bg');
@@ -50,6 +53,9 @@ scenery.addBackground = function(){
 	background2.body.velocity.x = game.worldspeed;
 	background2.alpha = 0;
 	game.add.tween(background2).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 0, false);
+
+	//resize for smaller viewports
+	background2.scale.setTo(game.world.width / 1800, 1);
 	game.backgrounds.add(background2);
 }
 

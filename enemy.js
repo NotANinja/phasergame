@@ -101,7 +101,7 @@ enemy.addScroll = function(){
 	var scroll = game.add.sprite(game.world.width,random(game.cliffHeight,game.height - 50),'scroll');
 	game.physics.arcade.enable(scroll);
 	scroll.body.velocity.x = game.worldspeed;
-	scrolls.add(scroll);
+	game.scrolls.add(scroll);
 }
 
 enemy.collectScroll = function(player,scroll){
