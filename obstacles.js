@@ -1,3 +1,4 @@
+'use strict';
 var obstacle = window.obstacle || {};
 obstacle.addRandomObstacles = function(){
 	var obstacleType = random(1,3);

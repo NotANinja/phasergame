@@ -1,3 +1,4 @@
+'use strict'
 var scenery = window.scenery || {};
 scenery.addStars = function(){
 	game.stars = game.add.group();

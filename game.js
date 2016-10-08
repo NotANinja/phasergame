@@ -186,6 +186,7 @@ var initializeGroups = function(){
 	game.wizardfireballs = game.add.group();
 }
 
+'use strict';
 var removeGameSprites = function(){
 	//remove all game elements from groups
 	game.player.kill();
