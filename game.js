@@ -245,17 +245,24 @@ game.addSplashScreen = function(){
 	splashImage.alpha = 0;
 	game.add.tween(splashImage).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
 
+	var controlsMsg = game.add.text(0, game.world.height / 5, "Controls: \nWASD or\n↑←↓→", {
+        font: "35px 'Lucida Console', Monaco, monospace",
+        fill: "#DDDDDD",
+    });
+    controlsMsg.alpha = 0.7;
+	
+
 	var startMessage = game.add.text((game.world.width / 2) - 350, (game.world.height / 2) + 300, "Collect scrolls to get points. \nPress space to start!", {
         font: "65px Arial",
         fill: "#DDDDDD",
         align: "center",
     });
 
-    startMessage.alpha = .2;
-	game.add.tween(startMessage).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, -1, true);
+    game.add.tween(startMessage).to( { alpha: .2 }, 1000, Phaser.Easing.Linear.None, true, 0, -1, true);
 
 	game.splashScreen.add(startMessage);
 	game.splashScreen.add(splashImage);
+	game.splashScreen.add(controlsMsg);
 }
 };
 
