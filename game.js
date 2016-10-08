@@ -1,7 +1,7 @@
 'use strict';
 window.onload = function(){
-	var gameWidth = Math.min(Math.max(1000, document.documentElement.clientWidth), 1800);
-	console.log(gameWidth);
+	var gameWidth = Math.min(Math.max(1000, $(window).width()), 1800);
+
 	window.game = new Phaser.Game(gameWidth, 900, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });	
 
 //declare game variables
@@ -48,7 +48,7 @@ function create() {
 	game.spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 	//init global variables
-	game.worldspeed = -120;
+	game.worldspeed = -100 - (0.05 * gameWidth);
 	game.cliffHeight = 255;
 
     scenery.addMoon();
